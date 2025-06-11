@@ -1,0 +1,15 @@
+
+devbox.*
+LICENSE_HEADER.txt
+Makefile
+test
+.devbox
+.devcontainer
+.editorconfig
+.envrc
+.gitattributes
+.pre-commit-config.yaml
+.tmux.conf
+.tmuxinator.yml
+*.tgz
+.vscode

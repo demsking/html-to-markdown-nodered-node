@@ -1,0 +1,7 @@
+node_modules/
+.nix-node/
+.devbox/
+.directory
+*.log
+*.tgz
+*.kate-swp
