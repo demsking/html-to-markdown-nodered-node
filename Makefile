@@ -10,6 +10,7 @@ lint:
 fix:
 	ruff check . --fix
 
+.PHONY: test
 test:
 	npm run test
 

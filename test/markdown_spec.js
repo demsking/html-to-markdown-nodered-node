@@ -42,9 +42,16 @@ describe('to-markdown Node', () => {
     });
   });
 
-  it('should make payload to markdown', (done) => {
+  it("should convert msg field html to markdown", function (done) {
     const flow = [
-      { id: "n1", type: "to-markdown", name: "to-markdown", wires:[["n2"]] },
+      {
+        id: "n1",
+        type: "to-markdown",
+        name: "to-markdown",
+        htmlType: "msg",
+        html: "htmlContent",
+        wires: [["n2"]]
+      },
       { id: "n2", type: "helper" }
     ];
 
@@ -53,15 +60,117 @@ describe('to-markdown Node', () => {
       const n1 = helper.getNode("n1");
 
       n2.on("input", (msg) => {
-        try {
-          msg.should.have.property('payload', '# Hello World');
-          done();
-        } catch(err) {
-          done(err);
-        }
+        msg.payload.should.equal("# Hello World");
+        done();
       });
 
-      n1.receive({ payload: '<h1>Hello World</h1>\n' });
+      n1.receive({ htmlContent: "<h1>Hello World</h1>" });
+    });
+  });
+
+  it("should convert msg payload to markdown", function (done) {
+    const flow = [
+      {
+        id: "n1",
+        type: "to-markdown",
+        name: "to-markdown",
+        htmlType: "msg",
+        html: "payload",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ];
+
+    helper.load(toMarkdownNode, flow, () => {
+      const n2 = helper.getNode("n2");
+      const n1 = helper.getNode("n1");
+
+      n2.on("input", (msg) => {
+        msg.payload.should.equal("# Hello World");
+        done();
+      });
+
+      n1.receive({ payload: "<h1>Hello World</h1>" });
+    });
+  });
+
+  it("should convert a msg field html to markdown", function (done) {
+    const flow = [
+      {
+        id: "n1",
+        type: "to-markdown",
+        name: "to-markdown",
+        htmlType: "msg",
+        html: "content",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ];
+
+    helper.load(toMarkdownNode, flow, () => {
+      const n2 = helper.getNode("n2");
+      const n1 = helper.getNode("n1");
+
+      n2.on("input", (msg) => {
+        msg.payload.should.equal("# Hello World");
+        done();
+      });
+
+      n1.receive({ content: "<h1>Hello World</h1>" });
+    });
+  });
+
+  it("should convert deep msg field html to markdown", function (done) {
+    const flow = [
+      {
+        id: "n1",
+        type: "to-markdown",
+        name: "to-markdown",
+        htmlType: "msg",
+        html: "data.article.content",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ];
+
+    helper.load(toMarkdownNode, flow, () => {
+      const n2 = helper.getNode("n2");
+      const n1 = helper.getNode("n1");
+
+      n2.on("input", (msg) => {
+        msg.payload.should.equal("# Hello World");
+        done();
+      });
+
+      n1.receive({ data: { article: { content: "<h1>Hello World</h1>" } } });
+    });
+  });
+
+  it("should convert global context html to markdown", function (done) {
+    const flow = [
+      {
+        id: "n1",
+        type: "to-markdown",
+        name: "to-markdown",
+        htmlType: "global",
+        html: "htmlContent",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ];
+
+    helper.load(toMarkdownNode, flow, {}, () => {
+      const n1 = helper.getNode("n1");
+      const n2 = helper.getNode("n2");
+
+      n1.context().global.set("htmlContent", "<h1>Hello World</h1>\n");
+
+      n2.on("input", (msg) => {
+        msg.should.have.property('payload', '# Hello World');
+        done();
+      });
+
+      n1.receive({});
     });
   });
 });

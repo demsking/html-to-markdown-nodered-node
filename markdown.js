@@ -15,16 +15,33 @@
 module.exports = function (RED) {
   const { NodeHtmlMarkdown } = require('node-html-markdown');
 
-  function parse(config) {
+  function ToMarkdownNode(config) {
     RED.nodes.createNode(this, config);
 
-    const node = this;
+    this.on('input', (msg) => {
+      let payload = null;
 
-    this.on('input', function (msg) {
-      msg.payload = NodeHtmlMarkdown.translate(msg.payload);
-      node.send(msg);
+      switch (config.htmlType) {
+        case 'flow':
+          payload = this.context().flow.get(config.html);
+          break;
+
+        case 'global':
+          payload = this.context().global.get(config.html);
+          break;
+
+        default: // msg
+          payload = RED.util.getMessageProperty(msg, config.html);
+          break;
+      }
+
+      if (payload) {
+        msg.payload = NodeHtmlMarkdown.translate(payload);
+
+        this.send(msg);
+      }
     });
   }
 
-  RED.nodes.registerType('to-markdown', parse);
+  RED.nodes.registerType('to-markdown', ToMarkdownNode);
 };
