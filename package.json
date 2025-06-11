@@ -17,9 +17,13 @@
     "test": "mocha \"test/**/*_spec.js\""
   },
   "node-red": {
+    "version": ">=3.0.0",
     "nodes": {
-      "markdown": "markdown.js"
+      "to-markdown": "markdown.js"
     }
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "node-html-markdown": "^1.3.0"
