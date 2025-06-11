@@ -1,3 +1,5 @@
+PACKAGE_VERSION := $(shell jq -r '.version' package.json)
+
 shell:
 	tmuxinator
 
@@ -34,7 +36,7 @@ package: lint test
 	npm pack
 
 publish: package
-	git commit package.* -m "Release $(APP_VERSION)"
+	git commit package.* -m "Release $(PACKAGE_VERSION)"
 	npm publish --access public
-	git tag v$(APP_VERSION)
+	git tag v$(PACKAGE_VERSION)
 	git push --tags origin main

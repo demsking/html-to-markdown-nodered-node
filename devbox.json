@@ -7,7 +7,8 @@
     "gnumake@latest",
     "pre-commit@latest",
     "editorconfig-checker@latest",
-    "nodejs@20"
+    "nodejs@20",
+    "jq@latest"
   ],
   "shell": {
     "init_hook": [
